@@ -1,2 +1,2 @@
-# L-p-Tr-nh-Mobile
+# SpecCheck
 Bài làm môn lập trình Mobile
