@@ -48,6 +48,7 @@ fun HomeScreenApp2(navController: NavController){
                 LaptopDetailCard()
             }
         }
+        //heloo
         AnimatedVisibility(
             visible = showMenu.value,
             enter = slideInHorizontally(initialOffsetX = { it }),
