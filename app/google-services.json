@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "568457951029",
+    "project_id": "speccheck-3e1d6",
+    "storage_bucket": "speccheck-3e1d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568457951029:android:5f76233984917c1945fe7c",
+        "android_client_info": {
+          "package_name": "com.example.deadlinemh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGVxD_ajo5M1Y2MraZWDSXIwtt_T3PsMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
