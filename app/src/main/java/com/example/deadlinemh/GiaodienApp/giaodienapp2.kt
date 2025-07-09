@@ -191,3 +191,8 @@ fun PreviewLaptopDetailCard() {
     val navController = rememberNavController()
     HomeScreenApp2(navController)
 }
+
+
+
+
+//hello hh
