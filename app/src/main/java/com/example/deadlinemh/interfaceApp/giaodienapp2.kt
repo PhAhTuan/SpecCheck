@@ -26,15 +26,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.deadlinemh.GiaodienApp.phantrencung
-import com.example.deadlinemh.Menu.MenuApp
-import com.example.deadlinemh.R
-
+import com.example.deadlinemh.data.Product
+import com.example.deadlinemh.interfaceApp.getFakeProductGroups
+import com.example.deadlinemh.interfaceApp.phantrencung
+import com.example.deadlinemh.menu.MenuApp
 
 
 @Composable
-fun HomeScreenApp2(navController: NavController){
+fun HomeScreenApp2(navController: NavController, productId: Int){
     val showMenu = remember { mutableStateOf(false) }
+    val product = getFakeProductGroups(navController)
+        .flatMap { it.products }
+        .find { it.id == productId }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             phantrencung(onMenuClick = {showMenu.value = true })
@@ -45,7 +48,9 @@ fun HomeScreenApp2(navController: NavController){
                 .padding(top = 102.dp)
         ) {
             item {
-                LaptopDetailCard()
+                product?.let {
+                    LaptopDetailCard(it)
+                } ?: Text("Không tìm thấy sản phẩm")
             }
         }
         AnimatedVisibility(
@@ -69,7 +74,7 @@ fun HomeScreenApp2(navController: NavController){
 }
 
 @Composable
-fun LaptopDetailCard() {
+fun LaptopDetailCard(product: Product) {
     Column(
         modifier = Modifier
             .padding(12.dp)
@@ -82,7 +87,8 @@ fun LaptopDetailCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Legion 5 Y7000 2024 i7 13650HX",
+                text = product.name,
+                modifier = Modifier.padding(top = 8.dp),
                 style = TextStyle(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -91,9 +97,9 @@ fun LaptopDetailCard() {
             )
 
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        //Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Giá tham khảo: 22,500,55đ",
+            text = "Giá tham khảo: ${product.priceNew}",
             color = Color.Blue,
             fontSize = 14.sp,
             modifier = Modifier.padding(vertical = 4.dp)
@@ -102,7 +108,7 @@ fun LaptopDetailCard() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Image(
-            painter = painterResource(id = R.drawable.legion5),
+            painter = painterResource(id = product.imageResId),
             contentDescription = "Laptop Image",
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,10 +121,10 @@ fun LaptopDetailCard() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            InfoTag(label = "CPU", value = "i7-13650H")
-            InfoTag(label = "RAM", value = "24GB")
-            InfoTag(label = "SSD", value = "512GB")
-            InfoTag(label = "VGA", value = "RTX4060")
+            InfoTag(label = "CPU", value = product.cpu)
+            InfoTag(label = "RAM", value = product.ram)
+            InfoTag(label = "SSD", value = product.ssd)
+            InfoTag(label = "VGA", value = product.vga)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -153,19 +159,7 @@ fun LaptopDetailCard() {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = """
-            CPU: Intel Core i7 13650HX (14 nhân 20 luồng, turbo boost, 24MB Intel® Smart Cache)
-            RAM: 24GB
-            SSD: 512GB
-            Độ phân giải: 15.6" FHD (1920x1080) IPS, 144Hz, 100% sRGB
-            VGA: Intel UHD Graphics cho gen 14 và NVIDIA® GeForce® RTX™ 4060 8GB GDDR6
-            Cổng kết nối:
-            - Kết nối không dây: 2x USB 3.2 Gen 1
-            - 1x USB 3.2 Gen 1 (Always On)
-            - 1x HDMI, up to 8K/60Hz
-            - 1x Ethernet (RJ-45)
-            Sạc: 230W
-        """.trimIndent(),
+            text = product.infor.trimIndent(),
             fontSize = 18.sp,
             color = Color.Black
         )
@@ -189,10 +183,9 @@ fun InfoTag(label: String, value: String) {
 @Composable
 fun PreviewLaptopDetailCard() {
     val navController = rememberNavController()
-    HomeScreenApp2(navController)
+    HomeScreenApp2(navController, productId = 1)
 }
 
 
 
 
-//hello hh

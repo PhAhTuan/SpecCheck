@@ -1,7 +1,5 @@
-package com.example.deadlinemh.GiaoDienLogin
+package com.example.deadlinemh.interfaceLogin
 
-import android.R.attr.onClick
-import android.R.attr.password
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -188,7 +186,7 @@ fun NutAnn(email: String, password: String, agpassword: String, navController: N
             contentDescription = "anh logo",
             modifier = Modifier.size(30.dp)
         )
-        Text(text = "Đăng ký với Facebook")
+        Text(text = "Đăng ký với Email")
     }
 }
 
