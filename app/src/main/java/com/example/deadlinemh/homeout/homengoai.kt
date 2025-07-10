@@ -54,4 +54,3 @@ fun Brngoai(){
         contentScale = ContentScale.Crop
     )
 }
-

@@ -1,3 +1,4 @@
+package com.example.deadlinemh.interfaceApp
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -11,6 +12,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,40 +23,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.deadlinemh.R
 import com.example.deadlinemh.data.Product
-import com.example.deadlinemh.interfaceApp.getFakeProductGroups
-import com.example.deadlinemh.interfaceApp.phantrencung
 import com.example.deadlinemh.menu.MenuApp
 
+// Reference to product data from giaodienapp1.kt
+private val allProducts = productGroups.flatMap { it.products }
 
 @Composable
-fun HomeScreenApp2(navController: NavController, productId: Int){
+fun HomeScreenApp2(navController: NavController, productId: Int) {
     val showMenu = remember { mutableStateOf(false) }
-    val product = getFakeProductGroups(navController)
-        .flatMap { it.products }
-        .find { it.id == productId }
+    val product = allProducts.find { it.id == productId } ?: return
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            phantrencung(onMenuClick = {showMenu.value = true })
-        }
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 102.dp)
-        ) {
-            item {
-                product?.let {
-                    LaptopDetailCard(it)
-                } ?: Text("Không tìm thấy sản phẩm")
+            phantrencung(
+                onSearchTextChange = { /* Handle search if needed */ },
+                onMenuClick = { showMenu.value = true }
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 102.dp)
+            ) {
+                item {
+                    ProductDetailCard(product = product)
+                }
             }
         }
-        //heloo
         AnimatedVisibility(
             visible = showMenu.value,
             enter = slideInHorizontally(initialOffsetX = { it }),
@@ -75,11 +77,10 @@ fun HomeScreenApp2(navController: NavController, productId: Int){
 }
 
 @Composable
-fun LaptopDetailCard(product: Product) {
+fun ProductDetailCard(product: Product) {
     Column(
         modifier = Modifier
             .padding(12.dp)
-           // .padding(top = 64.dp)
             .fillMaxWidth()
     ) {
         Row(
@@ -89,35 +90,41 @@ fun LaptopDetailCard(product: Product) {
         ) {
             Text(
                 text = product.name,
-                modifier = Modifier.padding(top = 8.dp),
                 style = TextStyle(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             )
-
         }
-        //Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Giá tham khảo: ${product.priceNew}",
-            color = Color.Blue,
-            fontSize = 14.sp,
+            text = "Giá: ${product.priceNew}",
+            color = Color.Red,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(vertical = 4.dp)
         )
-
+        if (product.priceOld != product.priceNew) {
+            Text(
+                text = "Giá gốc: ${product.priceOld}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
-
         Image(
             painter = painterResource(id = product.imageResId),
-            contentDescription = "Laptop Image",
+            contentDescription = product.name,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(165.dp)
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = androidx.compose.ui.layout.ContentScale.Fit
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -127,21 +134,20 @@ fun LaptopDetailCard(product: Product) {
             InfoTag(label = "SSD", value = product.ssd)
             InfoTag(label = "VGA", value = product.vga)
         }
-
         Spacer(modifier = Modifier.height(8.dp))
-
         Row {
             repeat(5) {
-                Icon(Icons.Default.Star,
+                Icon(
+                    Icons.Default.Star,
                     contentDescription = "Star",
                     tint = Color.Red,
                     modifier = Modifier.size(26.dp)
-                    )
+                )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = { },
+            onClick = { /* Handle compare action */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -149,20 +155,18 @@ fun LaptopDetailCard(product: Product) {
         ) {
             Text(text = "So Sánh", color = Color.White)
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-
         Text(
             text = "THÔNG SỐ KỸ THUẬT",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
-
         Text(
-            text = product.infor.trimIndent(),
-            fontSize = 18.sp,
-            color = Color.Black
+            text = product.infor,
+            fontSize = 14.sp,
+            color = Color.Black,
+            lineHeight = 20.sp
         )
     }
 }
@@ -182,11 +186,7 @@ fun InfoTag(label: String, value: String) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewLaptopDetailCard() {
+fun PreviewHomeScreenApp2() {
     val navController = rememberNavController()
-    HomeScreenApp2(navController, productId = 1)
+    HomeScreenApp2(navController = navController, productId = 1)
 }
-
-
-
-
