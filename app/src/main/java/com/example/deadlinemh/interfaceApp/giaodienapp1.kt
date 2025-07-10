@@ -53,7 +53,7 @@ import com.example.deadlinemh.menu.MenuApp
 
 
 @Composable
-fun HomeScreenApp1(navController: NavController) {
+fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
     val selectedProduct = remember { mutableStateOf<Product?>(null) }
     val showMenu = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
@@ -63,7 +63,7 @@ fun HomeScreenApp1(navController: NavController) {
             LazyColumn {
                 item { AnhBanner() }
                 items(getFakeProductGroups(navController)) { group ->
-                    ProductGroupSection(group, navController)
+                    ProductGroupSection(group, navController, leftProductId)
                   }
                 }
             }
@@ -160,7 +160,7 @@ fun AnhBanner() {
 }
 
 @Composable
-fun ProductCard(product: Product, modifier: Modifier = Modifier, onClick: (Int) -> Unit) {
+fun ProductCard(product: Product, modifier: Modifier = Modifier, onClick: (Int) -> Unit ) {
 
     Column(
         modifier = modifier
@@ -206,7 +206,7 @@ fun ProductCard(product: Product, modifier: Modifier = Modifier, onClick: (Int) 
     }
 }
 @Composable
-fun ProductGroupSection(group: ProductGroup, navController: NavController) {
+fun ProductGroupSection(group: ProductGroup, navController: NavController, leftProductId: Int? = null) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -219,7 +219,13 @@ fun ProductGroupSection(group: ProductGroup, navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow {
             items(group.products) { product ->
-                ProductCard(product = product, onClick = {navController.navigate("chitietsanpham/${product.id}")})
+                ProductCard(product = product) { productId ->
+                    if (leftProductId != null) {
+                        navController.navigate("compare/$leftProductId/$productId")
+                    } else {
+                        navController.navigate("chitietsanpham/$productId")
+                    }
+                }
             }
         }
     }

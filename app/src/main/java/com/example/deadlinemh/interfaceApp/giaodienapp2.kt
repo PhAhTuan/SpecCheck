@@ -49,11 +49,10 @@ fun HomeScreenApp2(navController: NavController, productId: Int){
         ) {
             item {
                 product?.let {
-                    LaptopDetailCard(it)
+                    LaptopDetailCard(it, navController)
                 } ?: Text("Không tìm thấy sản phẩm")
             }
         }
-        //heloo
         AnimatedVisibility(
             visible = showMenu.value,
             enter = slideInHorizontally(initialOffsetX = { it }),
@@ -75,7 +74,7 @@ fun HomeScreenApp2(navController: NavController, productId: Int){
 }
 
 @Composable
-fun LaptopDetailCard(product: Product) {
+fun LaptopDetailCard(product: Product, navController: NavController) {
     Column(
         modifier = Modifier
             .padding(12.dp)
@@ -98,7 +97,6 @@ fun LaptopDetailCard(product: Product) {
             )
 
         }
-        //Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Giá tham khảo: ${product.priceNew}",
             color = Color.Blue,
@@ -141,7 +139,9 @@ fun LaptopDetailCard(product: Product) {
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = { },
+            onClick = {
+                navController.navigate("compare/${product.id}")
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
