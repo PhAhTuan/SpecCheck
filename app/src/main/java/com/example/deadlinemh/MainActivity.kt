@@ -1,24 +1,27 @@
 package com.example.deadlinemh
 
+import HomeScreenApp2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.example.deadlinemh.GiaoDienLogin.HomeScreenn
-import com.example.deadlinemh.GiaoDienLogin.HomeScreennn
-import com.example.deadlinemh.homengoai.HomeHome
+import com.example.deadlinemh.data.Product
+import com.example.deadlinemh.interfaceLogin.HomeScreenn
+import com.example.deadlinemh.interfaceLogin.HomeScreennn
 import com.example.deadlinemh.interfaceApp.HomeScreenApp1
-import com.example.deadlinemh.interfaceApp.HomeScreenApp2
+import com.example.deadlinemh.interfaceApp.getFakeProductGroups
 import com.example.deadlinemh.menu.testMenu
+import com.example.deadlinemh.homengoai.HomeHome
 import com.example.deadlinemh.ui.theme.DeadlineMHTheme
+import kotlin.collections.find
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,35 +30,43 @@ class MainActivity : ComponentActivity() {
         setContent {
             DeadlineMHTheme {
                 val navController = rememberNavController()
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    NavHost(navController = navController, startDestination = "welcome") {
-                        composable("welcome") {
+                Surface(modifier = Modifier.fillMaxSize())
+                {
+                    val allFakeProducts: List<Product> = getFakeProductGroups(navController).flatMap { it.products }
+                    NavHost(navController = navController, startDestination ="welcome"){
+                        composable("welcome"){
                             HomeHome(navController)
                         }
-                        composable("homeMain") {
+                        composable("homeMain"){
                             HomeScreennn(navController)
                         }
-                        composable("dangky") {
+                        composable("dangky"){
                             HomeScreenn(navController)
                         }
-                        composable("dangnhap") {
+                        composable("dangnhap"){
                             HomeScreennn(navController)
                         }
-                        composable("trangchu") {
+                        composable("trangchu"){
                             HomeScreenApp1(navController)
                         }
-                        composable("dangkyyy") {
+                        composable("dangkyyy"){
                             HomeScreennn(navController)
                         }
-                        composable("menucon") {
-                            testMenu(navController, onClose = { navController.popBackStack() })
+                        composable("menucon"){
+                            testMenu(navController, onClose = {navController.popBackStack()})
                         }
-                        composable(
-                            route = "chitietsanpham/{productId}",
-                            arguments = listOf(navArgument("productId") { type = NavType.IntType })
-                        ) { backStackEntry ->
-                            val productId = backStackEntry.arguments?.getInt("productId") ?: 1
-                            HomeScreenApp2(navController = navController, productId = productId)
+                        composable("chitietsanpham/{productId}") { backStackEntry ->
+                            val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
+                            val product = allFakeProducts.find { it.id == productId }
+
+                            if (product != null) {
+                                HomeScreenApp2(navController = navController,productId = product.id )
+                            } else {
+                                Text("Không tìm thấy sản phẩm")
+                            }
+                        }
+                        composable("xemtatca"){
+                            testMenu(navController, onClose = {navController.popBackStack()})
                         }
                     }
                 }
@@ -63,3 +74,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
