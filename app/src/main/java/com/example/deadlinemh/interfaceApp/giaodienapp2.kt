@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.deadlinemh.data.Product
+import com.example.deadlinemh.interfaceApp.Phantrencung
 import com.example.deadlinemh.interfaceApp.getFakeProductGroups
-import com.example.deadlinemh.interfaceApp.phantrencung
 import com.example.deadlinemh.menu.MenuApp
 
 
@@ -40,7 +40,7 @@ fun HomeScreenApp2(navController: NavController, productId: Int){
         .find { it.id == productId }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            phantrencung(onMenuClick = {showMenu.value = true })
+            Phantrencung(onMenuClick = {showMenu.value = true })
         }
         LazyColumn(
             modifier = Modifier

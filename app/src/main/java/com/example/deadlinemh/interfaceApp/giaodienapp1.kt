@@ -38,7 +38,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
-
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,8 +60,8 @@ fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
     val selectedProduct = remember { mutableStateOf<Product?>(null) }
     val showMenu = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
-        Column() {
-            phantrencung(onMenuClick = { showMenu.value = true })
+        Column {
+            Phantrencung(onMenuClick = { showMenu.value = true })
             LazyColumn {
                 item { AnhBanner() }
                 items(getFakeProductGroups(navController)) { group ->
@@ -100,7 +99,7 @@ fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
         }
     }
 @Composable
-fun phantrencung(onMenuClick: () -> Unit){
+fun Phantrencung(onMenuClick: () -> Unit){
     var timkiem = remember { mutableStateOf("") }
     Column(
         modifier = Modifier

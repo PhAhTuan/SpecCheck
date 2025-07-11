@@ -2,6 +2,8 @@ package com.example.deadlinemh.interfaceLogin
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,8 +41,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.deadlinemh.R
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
@@ -135,7 +141,38 @@ fun Nhapthongtin(emailState: MutableState<String>, passwordState: MutableState<S
 fun NutAn(taikhoan: String, password: String, navController: NavController){
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
+    val token = "568457951029-b5brirnouvh9jkhf4fak5p7d6ii8dmre.apps.googleusercontent.com"
+    val gso = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(token)
+            .requestEmail()
+            .build()
+    }
+    val googleSignInClient = remember {
+        GoogleSignIn.getClient(context, gso)
+    }
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(context, "Đăng nhập Google thành công", Toast.LENGTH_SHORT).show()
+                        navController.navigate("trangchu")
+                    } else {
+                        Toast.makeText(context, "Google login thất bại", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        } catch (e: ApiException) {
+            Toast.makeText(context, "Google Sign-In thất bại: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+//---------------------------------------------
     val otpState = remember { mutableStateOf("") }
     val verificationId = remember { mutableStateOf("") }
 
@@ -251,7 +288,10 @@ fun NutAn(taikhoan: String, password: String, navController: NavController){
     Spacer(modifier = Modifier.height(16.dp))
 //---------------------------------------
     OutlinedButton(
-        onClick = {},
+        onClick = {
+            val signInIntent = googleSignInClient.signInIntent
+            launcher.launch(signInIntent)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -263,7 +303,7 @@ fun NutAn(taikhoan: String, password: String, navController: NavController){
             modifier = Modifier
                 .size(30.dp)
         )
-        Text(text = "Đăng nhập với ")
+        Text(text = "Đăng nhập với Email")
     }
 }
 @Composable

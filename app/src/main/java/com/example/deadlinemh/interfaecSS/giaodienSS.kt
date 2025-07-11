@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.deadlinemh.data.Product
+import com.example.deadlinemh.interfaceApp.Phantrencung
 import com.example.deadlinemh.interfaceApp.getFakeProductGroups
-import com.example.deadlinemh.interfaceApp.phantrencung
 import com.example.deadlinemh.menu.MenuApp
 
 @Composable
@@ -59,7 +59,7 @@ fun HomeScreenSS(navController: NavController, leftProductId: Int? = null, right
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        phantrencung(onMenuClick = { showMenu.value = true })
+        Phantrencung(onMenuClick = { showMenu.value = true })
         Row(
             modifier = Modifier
                 .fillMaxWidth()
