@@ -104,9 +104,11 @@ fun Phantrencung(onMenuClick: () -> Unit){
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
             .background(Color(0xFF4FB3BF))
             .padding(12.dp)
             .padding(top = 38.dp)
+
     ){
         Row(
             modifier = Modifier

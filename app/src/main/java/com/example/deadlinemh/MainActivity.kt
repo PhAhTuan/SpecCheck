@@ -27,6 +27,7 @@ import com.example.deadlinemh.interfaceApp.getFakeProductGroups
 import com.example.deadlinemh.menu.testMenu
 import com.example.deadlinemh.homengoai.HomeHome
 import com.example.deadlinemh.interfaceApp.AccountScreen
+import com.example.deadlinemh.interfaceApp.HomeSRFavorite
 import com.example.deadlinemh.interfaecSS.HomeScreenSS
 import com.example.deadlinemh.ui.theme.DeadlineMHTheme
 import com.google.firebase.Firebase
@@ -193,6 +194,15 @@ fun MainScreen() {
                             }
                         }
                     )
+                }
+                composable("yeuthich") {
+                    if (FirebaseAuth.getInstance().currentUser == null) {
+                        navController.navigate("dangnhap") {
+                            popUpTo(navController.graph.startDestinationId)
+                        }
+                    } else {
+                        HomeSRFavorite(navController = navController)
+                    }
                 }
             }
         }

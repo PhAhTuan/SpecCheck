@@ -1,4 +1,5 @@
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -20,16 +21,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.deadlinemh.data.Product
 import com.example.deadlinemh.interfaceApp.Phantrencung
+import com.example.deadlinemh.interfaceApp.Thanhtaskbar
 import com.example.deadlinemh.interfaceApp.getFakeProductGroups
 import com.example.deadlinemh.menu.MenuApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -70,15 +81,39 @@ fun HomeScreenApp2(navController: NavController, productId: Int){
                 )
             }
         }
+        Thanhtaskbar(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter), navController)
     }
 }
 
 @Composable
 fun LaptopDetailCard(product: Product, navController: NavController) {
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+    var isFavorite by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var isLoading by remember { mutableStateOf(true) }
+    LaunchedEffect(product.id) {
+        auth.currentUser?.let { user ->
+            db.collection("users").document(user.uid)
+                .collection("favorites").document(product.id.toString())
+                .get()
+                .addOnSuccessListener { document ->
+                    isFavorite = document.exists()
+                    isLoading = false
+                }
+                .addOnFailureListener {
+                    isLoading = false
+                    Toast.makeText(context, "Lỗi tải trạng thái yêu thích", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        } ?: run {
+            isLoading = false
+        }
+    }
     Column(
         modifier = Modifier
             .padding(12.dp)
-           // .padding(top = 64.dp)
+            // .padding(top = 64.dp)
             .fillMaxWidth()
     ) {
         Row(
@@ -95,7 +130,60 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
                     fontSize = 20.sp
                 )
             )
-
+            IconButton(
+                onClick = {
+                    auth.currentUser?.let { user ->
+                        if (isFavorite) {
+                            // Xóa khỏi danh sách yêu thích
+                            db.collection("users").document(user.uid)
+                                .collection("favorites").document(product.id.toString())
+                                .delete()
+                                .addOnSuccessListener {
+                                    isFavorite = false
+                                    Toast.makeText(context, "Đã bỏ yêu thích", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        context,
+                                        "Lỗi khi bỏ yêu thích",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        } else {
+                            // Thêm vào danh sách yêu thích
+                            db.collection("users").document(user.uid)
+                                .collection("favorites").document(product.id.toString())
+                                .set(product)
+                                .addOnSuccessListener {
+                                    isFavorite = true
+                                    Toast.makeText(
+                                        context,
+                                        "Đã thêm vào yêu thích",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        context,
+                                        "Lỗi khi thêm vào yêu thích",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
+                    } ?: Toast.makeText(context, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
+                },
+                enabled = !isLoading // Vô hiệu hóa nút khi đang tải
+            ) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Chọn yêu thích",
+                    tint = if (isFavorite) Color.Red else Color.Gray,
+                    modifier = Modifier
+                        .padding(top = 8.dp, end = 8.dp)
+                        .size(32.dp)
+                )
+            }
         }
         Text(
             text = "Giá tham khảo: ${product.priceNew}",
@@ -130,11 +218,12 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
 
         Row {
             repeat(5) {
-                Icon(Icons.Default.Star,
+                Icon(
+                    Icons.Default.Star,
                     contentDescription = "Star",
                     tint = Color.Red,
                     modifier = Modifier.size(26.dp)
-                    )
+                )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -167,18 +256,18 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
     }
 }
 
-@Composable
-fun InfoTag(label: String, value: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
-            .padding(4.dp)
-    ) {
-        Text(text = label, fontSize = 12.sp, color = Color.DarkGray)
-        Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+    @Composable
+    fun InfoTag(label: String, value: String) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
+                .padding(4.dp)
+        ) {
+            Text(text = label, fontSize = 12.sp, color = Color.DarkGray)
+            Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        }
     }
-}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
