@@ -1,5 +1,6 @@
 package com.example.deadlinemh.interfaceApp
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -42,17 +43,34 @@ fun AccountScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf(TextFieldValue("")) }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(user) {
         if (user != null) {
+            Log.d("AccountScreen", "Loading user data for UID: ${user.uid}")
             val userDocRef = db.collection("users").document(user.uid)
-            userDocRef.get().addOnSuccessListener { document ->
-                if (document.exists()) {
-                    name = document.getString("name") ?: ""
-                    textState = TextFieldValue(name)
+            userDocRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        name = document.getString("name") ?: ""
+                        textState = TextFieldValue(name)
+                        val darkMode = document.getBoolean("isDarkMode") ?: false
+                        isDarkMode.value = darkMode
+                        onDarkModeToggle(darkMode)
+                        Log.d("AccountScreen", "Loaded name: $name, isDarkMode: $darkMode")
+                    }
+                    isLoading = false
                 }
-            }.addOnFailureListener { e ->
-                Toast.makeText(context, "Lỗi tải dữ liệu: ${e.message}", Toast.LENGTH_SHORT).show()
+                .addOnFailureListener { e ->
+                    isLoading = false
+                    Toast.makeText(context, "Lỗi tải dữ liệu: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("AccountScreen", "Error loading user data: ${e.message}")
+                }
+        } else {
+            isLoading = false
+            Toast.makeText(context, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
+            navController.navigate("dangnhap") {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
         }
     }
