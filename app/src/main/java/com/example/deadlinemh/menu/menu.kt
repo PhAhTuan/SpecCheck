@@ -108,16 +108,14 @@ fun MenuItemCon(title: String, navController: NavController){
             .padding(vertical = 12.dp)
             .padding(start = 24.dp)
             .clickable{
-                navController.navigate("menucon")
+                // Cập nhật logic điều hướng để truyền tên danh mục
+                navController.navigate("category/$title")
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = title, fontSize = 14.sp, color = Color.Gray)
     }
 }
-
-
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

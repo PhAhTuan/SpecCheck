@@ -27,6 +27,7 @@ import com.example.deadlinemh.interfaceApp.getFakeProductGroups
 import com.example.deadlinemh.menu.testMenu
 import com.example.deadlinemh.homengoai.HomeHome
 import com.example.deadlinemh.interfaceApp.AccountScreen
+import com.example.deadlinemh.interfaceApp.CategoryScreen
 import com.example.deadlinemh.interfaceApp.HomeSRFavorite
 import com.example.deadlinemh.interfaecSS.HomeScreenSS
 import com.example.deadlinemh.ui.theme.DeadlineMHTheme
@@ -163,6 +164,17 @@ fun MainScreen() {
                         leftProductId = leftProductId,
                         rightProductId = rightProductId
                     )
+                }
+                composable(
+                    "category/{categoryName}",
+                    arguments = listOf(navArgument("categoryName") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val categoryName = backStackEntry.arguments?.getString("categoryName")
+                    if (categoryName != null) {
+                        CategoryScreen(navController = navController, categoryName = categoryName)
+                    } else {
+                        Text("Lỗi: Không tìm thấy danh mục")
+                    }
                 }
                 composable("xemtatca") {
                     testMenu(navController, onClose = { navController.popBackStack() })
