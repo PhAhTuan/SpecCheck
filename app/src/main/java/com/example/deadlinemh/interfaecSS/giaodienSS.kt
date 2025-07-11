@@ -49,7 +49,7 @@ import com.example.deadlinemh.menu.MenuApp
 @Composable
 fun HomeScreenSS(navController: NavController, leftProductId: Int? = null, rightProductId: Int? = null) {
     val showMenu = remember { mutableStateOf(false) }
-    var searchQuery by remember { mutableStateOf("") } // Thêm dòng này
+    var searchQuery by remember { mutableStateOf("") }
     val leftProduct = leftProductId?.let { id ->
         getFakeProductGroups(navController)
             .flatMap { it.products }

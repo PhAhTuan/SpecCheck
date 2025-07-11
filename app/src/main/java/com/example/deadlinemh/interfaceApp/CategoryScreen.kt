@@ -19,20 +19,16 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(navController: NavController, categoryName: String) {
-    // Lấy danh sách tất cả sản phẩm
     val allProducts = remember { getFakeProductGroups(navController).flatMap { it.products } }
 
-    // Lọc sản phẩm dựa trên tên danh mục
     val filteredProducts = remember(allProducts, categoryName) {
         if (categoryName.equals("Lenovo", ignoreCase = true)) {
-            // Xử lý đặc biệt cho thương hiệu Lenovo có nhiều dòng sản phẩm khác nhau
             allProducts.filter { product ->
                 product.name.contains("Legion", ignoreCase = true) ||
                         product.name.contains("Xiaoxin", ignoreCase = true) ||
                         product.name.contains("Thinkbook", ignoreCase = true)
             }
         } else {
-            // Logic lọc chung cho các danh mục khác
             allProducts.filter { product ->
                 product.name.contains(categoryName, ignoreCase = true) ||
                         product.specs.contains(categoryName, ignoreCase = true)
@@ -60,7 +56,6 @@ fun CategoryScreen(navController: NavController, categoryName: String) {
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(filteredProducts) { product ->
-                        // Tái sử dụng Composable SearchResultItem đã tạo trước đó
                         SearchResultItem(product = product) {
                             navController.navigate("chitietsanpham/${product.id}")
                         }
