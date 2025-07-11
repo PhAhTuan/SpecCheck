@@ -25,8 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -47,6 +49,7 @@ import com.example.deadlinemh.menu.MenuApp
 @Composable
 fun HomeScreenSS(navController: NavController, leftProductId: Int? = null, rightProductId: Int? = null) {
     val showMenu = remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") } // Thêm dòng này
     val leftProduct = leftProductId?.let { id ->
         getFakeProductGroups(navController)
             .flatMap { it.products }
@@ -59,7 +62,11 @@ fun HomeScreenSS(navController: NavController, leftProductId: Int? = null, right
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Phantrencung(onMenuClick = { showMenu.value = true })
+        Phantrencung(
+            searchQuery = searchQuery,
+            onSearchQueryChange = { searchQuery = it },
+            onMenuClick = { showMenu.value = true }
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -99,7 +106,6 @@ fun HomeScreenSS(navController: NavController, leftProductId: Int? = null, right
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                //traiiiiiiiiii
                 if (leftProduct != null) {
                     ProductSummary(leftProduct)
                 } else {
@@ -122,7 +128,6 @@ fun HomeScreenSS(navController: NavController, leftProductId: Int? = null, right
                 thickness = 1.dp,
                 modifier = Modifier.fillMaxHeight()
             )
-            //phaiiiiiiiiiii
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -219,11 +224,6 @@ fun ProductSummary(product: Product) {
         )
     }
 }
-
-
-
-
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

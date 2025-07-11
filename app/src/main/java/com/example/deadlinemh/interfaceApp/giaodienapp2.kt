@@ -1,4 +1,3 @@
-
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -46,12 +45,17 @@ import androidx.compose.runtime.setValue
 @Composable
 fun HomeScreenApp2(navController: NavController, productId: Int){
     val showMenu = remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
     val product = getFakeProductGroups(navController)
         .flatMap { it.products }
         .find { it.id == productId }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Phantrencung(onMenuClick = {showMenu.value = true })
+            Phantrencung(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                onMenuClick = {showMenu.value = true }
+            )
         }
         LazyColumn(
             modifier = Modifier
@@ -113,7 +117,6 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
     Column(
         modifier = Modifier
             .padding(12.dp)
-            // .padding(top = 64.dp)
             .fillMaxWidth()
     ) {
         Row(
@@ -254,18 +257,18 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
     }
 }
 
-    @Composable
-    fun InfoTag(label: String, value: String) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
-                .padding(4.dp)
-        ) {
-            Text(text = label, fontSize = 12.sp, color = Color.DarkGray)
-            Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        }
+@Composable
+fun InfoTag(label: String, value: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
+            .padding(4.dp)
+    ) {
+        Text(text = label, fontSize = 12.sp, color = Color.DarkGray)
+        Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -273,7 +276,3 @@ fun PreviewLaptopDetailCard() {
     val navController = rememberNavController()
     HomeScreenApp2(navController, productId = 1)
 }
-
-
-
-

@@ -38,6 +38,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,50 +59,66 @@ import com.example.deadlinemh.menu.MenuApp
 
 @Composable
 fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
-    val selectedProduct = remember { mutableStateOf<Product?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
     val showMenu = remember { mutableStateOf(false) }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column {
-            Phantrencung(onMenuClick = { showMenu.value = true })
-            LazyColumn {
-                item { AnhBanner() }
-                items(getFakeProductGroups(navController)) { group ->
-                    ProductGroupSection(group, navController, leftProductId)
-                  }
-                }
-            }
-        Thanhtaskbar(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter), navController) // Căn chỉnh ở dưới cùng
 
-            AnimatedVisibility(
-                visible = showMenu.value,
-                enter = slideInHorizontally(initialOffsetX = { it }),
-                exit = slideOutHorizontally(targetOffsetX = { it })
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                ) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    MenuApp(
-                        onClose = { showMenu.value = false },
-                        navController = navController
-                    )
-                }
-                selectedProduct.value?.let { product ->
-                    Text(
-                        text = "Đã chọn: ${product.name}",
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .background(Color.Yellow)
-                    )
-                }
+    val allProducts = remember { getFakeProductGroups(navController).flatMap { it.products } }
+    val filteredProducts = remember(searchQuery, allProducts) {
+        if (searchQuery.isBlank()) {
+            emptyList()
+        } else {
+            allProducts.filter {
+                it.name.contains(searchQuery, ignoreCase = true)
             }
         }
     }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column {
+            Phantrencung(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                onMenuClick = { showMenu.value = true }
+            )
+
+            if (searchQuery.isBlank()) {
+                LazyColumn {
+                    item { AnhBanner() }
+                    items(getFakeProductGroups(navController)) { group ->
+                        ProductGroupSection(group, navController, leftProductId)
+                    }
+                }
+            } else {
+                SearchResultsList(products = filteredProducts, navController = navController)
+            }
+        }
+        Thanhtaskbar(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter), navController)
+
+        AnimatedVisibility(
+            visible = showMenu.value,
+            enter = slideInHorizontally(initialOffsetX = { it }),
+            exit = slideOutHorizontally(targetOffsetX = { it })
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                MenuApp(
+                    onClose = { showMenu.value = false },
+                    navController = navController
+                )
+            }
+        }
+    }
+}
 @Composable
-fun Phantrencung(onMenuClick: () -> Unit){
-    var timkiem = remember { mutableStateOf("") }
+fun Phantrencung(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    onMenuClick: () -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,8 +135,8 @@ fun Phantrencung(onMenuClick: () -> Unit){
             verticalAlignment = Alignment.CenterVertically
         ){
             OutlinedTextField(
-                value = timkiem.value,
-                onValueChange = {timkiem.value = it},
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
                 placeholder = {Text(text = "Hãy nhập tìm kiếm", color = Color.Black)},
                 shape = RoundedCornerShape(46.dp),
                 leadingIcon = {
@@ -131,7 +149,7 @@ fun Phantrencung(onMenuClick: () -> Unit){
                     .height(52.dp)
                     .fillMaxWidth(0.8f)
 
-                )
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 Icons.Default.Menu,
@@ -351,7 +369,7 @@ fun getFakeProductGroups(navController: NavController): List<ProductGroup> {
                             "Sạc: 65W USB-C")
             )
         ),
-                ProductGroup(
+        ProductGroup(
             title = "Dell",
             products = listOf(
                 Product(id=7,R.drawable.dell_inspiron_15_3520_, "Dell Inspiron 15 3530", "i5-1335U 8GB RAM 512GB SSD", "17,990,000đ", "15,490,000đ", cpu = "R7-8745H", ram = "16GB", ssd = "512GB", vga = "RTX 4050",
@@ -417,10 +435,10 @@ fun getFakeProductGroups(navController: NavController): List<ProductGroup> {
 fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
     Row(
         modifier = modifier
-        .fillMaxWidth()
-        .height(56.dp)
+            .fillMaxWidth()
+            .height(56.dp)
             .clip(RoundedCornerShape(16.dp))
-        .background(Color(0xFFE0E0E0)),
+            .background(Color(0xFFE0E0E0)),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -477,9 +495,47 @@ fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
     }
 }
 
+@Composable
+fun SearchResultsList(products: List<Product>, navController: NavController) {
+    if (products.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Không tìm thấy sản phẩm.")
+        }
+    } else {
+        LazyColumn(modifier = Modifier.padding(vertical = 8.dp)) {
+            items(products) { product ->
+                SearchResultItem(product = product, onClick = {
+                    navController.navigate("chitietsanpham/${product.id}")
+                })
+            }
+        }
+    }
+}
 
-
-
+@Composable
+fun SearchResultItem(product: Product, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = product.imageResId),
+            contentDescription = product.name,
+            modifier = Modifier
+                .size(60.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = product.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(text = product.priceNew, color = Color.Red, fontSize = 14.sp)
+        }
+    }
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -487,13 +543,3 @@ fun DefaultPreviewApp(){
     val navController = rememberNavController()
     HomeScreenApp1(navController)
 }
-
-
-
-
-
-
-
-
-
-
