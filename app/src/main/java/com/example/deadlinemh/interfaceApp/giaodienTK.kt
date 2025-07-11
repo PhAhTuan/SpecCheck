@@ -1,5 +1,6 @@
 package com.example.deadlinemh.interfaceApp
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,29 +12,50 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.deadlinemh.R
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.firestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun AccountScreen(
+    navController: NavController,
+    isDarkMode: MutableState<Boolean>,
+    onDarkModeToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val auth = FirebaseAuth.getInstance()
+    val db = Firebase.firestore
+    val user = auth.currentUser
+    val context = LocalContext.current
+
     var name by rememberSaveable { mutableStateOf("") }
-    val isDarkMode = rememberSaveable { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf(TextFieldValue("")) }
 
-    val backgroundColor = if (isDarkMode.value) Color.DarkGray else Color.White
-    val textColor = if (isDarkMode.value) Color.White else Color.Black
-    val dividerColor = if (isDarkMode.value) Color.Gray else Color.LightGray
+    LaunchedEffect(user) {
+        if (user != null) {
+            val userDocRef = db.collection("users").document(user.uid)
+            userDocRef.get().addOnSuccessListener { document ->
+                if (document.exists()) {
+                    name = document.getString("name") ?: ""
+                    textState = TextFieldValue(name)
+                }
+            }.addOnFailureListener { e ->
+                Toast.makeText(context, "Lỗi tải dữ liệu: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -49,9 +71,9 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = backgroundColor,
-                    titleContentColor = textColor,
-                    navigationIconContentColor = textColor
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -59,7 +81,7 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(backgroundColor)
+                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
                 .padding(16.dp),
@@ -71,16 +93,16 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(60.dp))
-                    .background(Color.LightGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = if (name.isEmpty()) "Bạn chưa có tên" else name,
+                text = if (name.isEmpty()) "Vui lòng đặt tên" else name,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = textColor,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -93,7 +115,7 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 Text(
                     text = "Đổi tên",
                     fontSize = 18.sp,
-                    color = textColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -102,69 +124,81 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                         }
                         .padding(16.dp)
                 )
-                HorizontalDivider(color = dividerColor, thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
 
                 Text(
                     text = "Yêu thích",
                     fontSize = 18.sp,
-                    color = textColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { navController.navigate("yeuthich") }
                         .padding(16.dp)
                 )
-                HorizontalDivider(color = dividerColor, thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { isDarkMode.value = !isDarkMode.value }
+                        .clickable {
+                            onDarkModeToggle(!isDarkMode.value)
+                        }
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Dark Mode", fontSize = 18.sp, color = textColor)
+                    Text(
+                        "Dark Mode",
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Switch(
                         checked = isDarkMode.value,
-                        onCheckedChange = { isDarkMode.value = it },
+                        onCheckedChange = { newValue ->
+                            onDarkModeToggle(newValue)
+                        },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            uncheckedThumbColor = Color.Gray
+                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                 }
-                HorizontalDivider(color = dividerColor, thickness = 1.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
 
                 Text(
                     text = "Đăng xuất",
                     fontSize = 18.sp,
-                    color = textColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate("dangxuat") }
+                        .clickable {
+                            auth.signOut()
+                            navController.navigate("dangnhap") {
+                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                            }
+                        }
                         .padding(16.dp)
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Dialog đổi tên
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    title = { Text("Đổi tên", color = textColor) },
+                    title = { Text("Đổi tên", color = MaterialTheme.colorScheme.onBackground) },
                     text = {
                         TextField(
                             value = textState,
                             onValueChange = { textState = it },
-                            label = { Text("Nhập tên mới", color = textColor) },
+                            label = { Text("Nhập tên mới", color = MaterialTheme.colorScheme.onBackground) },
                             colors = TextFieldDefaults.colors(
-                                focusedTextColor = textColor,
-                                unfocusedTextColor = textColor,
-                                focusedLabelColor = textColor,
-                                unfocusedLabelColor = textColor,
-                                focusedIndicatorColor = if (isDarkMode.value) Color.White else Color.Black,
-                                unfocusedIndicatorColor = if (isDarkMode.value) Color.Gray else Color.LightGray
+                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                     },
@@ -172,26 +206,31 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                         TextButton(
                             onClick = {
                                 name = textState.text
+                                if (user != null) {
+                                    db.collection("users").document(user.uid)
+                                        .set(mapOf("name" to name, "isDarkMode" to isDarkMode.value), SetOptions.merge())
+                                        .addOnSuccessListener {
+                                            Toast.makeText(context, "Đã lưu tên", Toast.LENGTH_SHORT).show()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(context, "Lỗi lưu tên: ${e.message}", Toast.LENGTH_SHORT).show()
+                                        }
+                                }
                                 showDialog = false
                             }
                         ) {
-                            Text("Lưu", color = textColor)
+                            Text("Lưu", color = MaterialTheme.colorScheme.primary)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showDialog = false }) {
-                            Text("Hủy", color = textColor)
+                            Text("Hủy", color = MaterialTheme.colorScheme.primary)
                         }
-                    }
+                    },
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ShowGDTK() {
-    val navController = rememberNavController()
-    AccountScreen(navController)
 }
