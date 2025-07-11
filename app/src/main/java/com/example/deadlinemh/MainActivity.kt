@@ -23,6 +23,7 @@ import com.example.deadlinemh.interfaceApp.HomeScreenApp1
 import com.example.deadlinemh.interfaceApp.getFakeProductGroups
 import com.example.deadlinemh.menu.testMenu
 import com.example.deadlinemh.homengoai.HomeHome
+import com.example.deadlinemh.interfaceApp.AccountScreen
 import com.example.deadlinemh.interfaecSS.HomeScreenSS
 import com.example.deadlinemh.ui.theme.DeadlineMHTheme
 import kotlin.collections.find
@@ -105,6 +106,12 @@ class MainActivity : ComponentActivity() {
                             }
                         composable("homethanhtaskbar") {
                             HomeScreenApp1(navController)
+                        }
+                        composable("dangxuat") {
+                            HomeScreennn(navController)
+                        }
+                        composable("account") {
+                            AccountScreen(navController)
                         }
                         }
                     }

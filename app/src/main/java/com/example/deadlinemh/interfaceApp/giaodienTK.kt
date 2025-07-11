@@ -41,7 +41,10 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 title = { Text("Tài khoản") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Back", modifier = Modifier.graphicsLayer(rotationZ = 90f)
+                        Icon(
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Back",
+                            modifier = Modifier.graphicsLayer(rotationZ = 90f)
                         )
                     }
                 },
@@ -62,7 +65,6 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Image(
                 painter = painterResource(id = R.drawable.legion5),
                 contentDescription = "Ảnh tài khoản",
@@ -74,7 +76,6 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
             Text(
                 text = if (name.isEmpty()) "Bạn chưa có tên" else name,
                 fontSize = 20.sp,
@@ -83,12 +84,10 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { showDialog = true }
-                    .padding(16.dp),
+                    .padding(16.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
-
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
@@ -97,11 +96,14 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                     color = textColor,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showDialog = true }
+                        .clickable {
+                            textState = TextFieldValue(name)
+                            showDialog = true
+                        }
                         .padding(16.dp)
                 )
                 HorizontalDivider(color = dividerColor, thickness = 1.dp)
-                // -----------------------------Yêu thích
+
                 Text(
                     text = "Yêu thích",
                     fontSize = 18.sp,
@@ -113,7 +115,6 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 )
                 HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                // ----------------------------Dark Mode
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -134,7 +135,6 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
                 }
                 HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                // ------------------------Đăng xuất
                 Text(
                     text = "Đăng xuất",
                     fontSize = 18.sp,
@@ -147,12 +147,13 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            // Dialog đổi tên
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
                     title = { Text("Đổi tên", color = textColor) },
                     text = {
-                        var textState by remember { mutableStateOf(TextFieldValue(name)) }
                         TextField(
                             value = textState,
                             onValueChange = { textState = it },
@@ -190,7 +191,7 @@ fun AccountScreen(navController: NavController, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ShowGDTK(){
+fun ShowGDTK() {
     val navController = rememberNavController()
     AccountScreen(navController)
 }

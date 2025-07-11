@@ -456,7 +456,10 @@ fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
         }
 
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.clickable { navController.navigate("account") },) {
+
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Cá nhân",
