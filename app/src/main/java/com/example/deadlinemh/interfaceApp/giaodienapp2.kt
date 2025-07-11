@@ -134,7 +134,6 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
                 onClick = {
                     auth.currentUser?.let { user ->
                         if (isFavorite) {
-                            // Xóa khỏi danh sách yêu thích
                             db.collection("users").document(user.uid)
                                 .collection("favorites").document(product.id.toString())
                                 .delete()
@@ -151,7 +150,6 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
                                     ).show()
                                 }
                         } else {
-                            // Thêm vào danh sách yêu thích
                             db.collection("users").document(user.uid)
                                 .collection("favorites").document(product.id.toString())
                                 .set(product)
@@ -173,7 +171,7 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
                         }
                     } ?: Toast.makeText(context, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
                 },
-                enabled = !isLoading // Vô hiệu hóa nút khi đang tải
+                enabled = !isLoading
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,

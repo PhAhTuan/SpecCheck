@@ -111,7 +111,7 @@ fun HomeSRFavorite(navController: NavController) {
                             product = product,
                             navController = navController,
                             onRemoveFavorite = {
-                                // Remove from Firebase
+
                                 auth.currentUser?.let { user ->
                                     db.collection("users").document(user.uid)
                                         .collection("favorites").document(product.id.toString())
