@@ -8,7 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,7 +26,6 @@ import com.example.deadlinemh.homengoai.HomeHome
 import com.example.deadlinemh.interfaecSS.HomeScreenSS
 import com.example.deadlinemh.ui.theme.DeadlineMHTheme
 import kotlin.collections.find
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,13 +102,16 @@ class MainActivity : ComponentActivity() {
                             //-------------------------
                             composable("xemtatca"){
                             testMenu(navController, onClose = {navController.popBackStack()})
-
                             }
+                        composable("homethanhtaskbar") {
+                            HomeScreenApp1(navController)
+                        }
                         }
                     }
                 }
             }
         }
     }
+
 
 

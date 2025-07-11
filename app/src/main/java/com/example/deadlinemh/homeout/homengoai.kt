@@ -15,11 +15,10 @@ import androidx.navigation.NavHostController
 import com.example.deadlinemh.R
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun HomeHome(navController: NavHostController) {
     LaunchedEffect(Unit) {
-        delay(500) // 0.5 giây
+        delay(500)
         navController.navigate("homeMain") {
             popUpTo("welcome") { inclusive = true }
         }
@@ -31,7 +30,6 @@ fun HomeHome(navController: NavHostController) {
         LogoNgoai()
     }
 }
-
 @Composable
 fun LogoNgoai() {
     Box(
@@ -45,7 +43,6 @@ fun LogoNgoai() {
         )
     }
 }
-
 @Composable
 fun Brngoai(){
     Image(painterResource(id = R.drawable.anhnen),

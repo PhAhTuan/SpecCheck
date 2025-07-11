@@ -35,6 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
+
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,8 +61,7 @@ fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
     val selectedProduct = remember { mutableStateOf<Product?>(null) }
     val showMenu = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
-        Column()
-        {
+        Column() {
             phantrencung(onMenuClick = { showMenu.value = true })
             LazyColumn {
                 item { AnhBanner() }
@@ -67,6 +70,8 @@ fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
                   }
                 }
             }
+        Thanhtaskbar(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter), navController) // Căn chỉnh ở dưới cùng
+
             AnimatedVisibility(
                 visible = showMenu.value,
                 enter = slideInHorizontally(initialOffsetX = { it }),
@@ -158,7 +163,6 @@ fun AnhBanner() {
         }
     }
 }
-
 @Composable
 fun ProductCard(product: Product, modifier: Modifier = Modifier, onClick: (Int) -> Unit ) {
 
@@ -407,6 +411,71 @@ fun getFakeProductGroups(navController: NavController): List<ProductGroup> {
         )
     )
 }
+
+@Composable
+fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
+    Row(
+        modifier = modifier
+        .fillMaxWidth()
+        .height(56.dp)
+            .clip(RoundedCornerShape(16.dp))
+        .background(Color(0xFFE0E0E0)),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Trang chủ",
+                tint = Color.Gray,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable{
+                        navController.navigate("homethanhtaskbar")
+                    }
+            )
+            Text(
+                text = "Trang chủ",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.ShoppingCart,
+                contentDescription = "Giỏ hàng",
+                tint = Color.Gray,
+                modifier = Modifier.size(32.dp)
+            )
+            Text(
+                text = "Giỏ hàng",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
+        }
+
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Cá nhân",
+                tint = Color.Gray,
+                modifier = Modifier.size(32.dp)
+
+            )
+            Text(
+                text = "Cá nhân",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
+        }
+    }
+}
+
+
+
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
