@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -462,13 +463,17 @@ fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                imageVector = Icons.Default.ShoppingCart,
-                contentDescription = "Giỏ hàng",
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Yêu thích",
                 tint = Color.Gray,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable{
+                        navController.navigate("ditoiyeuthich")
+                    }
             )
             Text(
-                text = "Giỏ hàng",
+                text = "Yêu thích",
                 color = Color.Black,
                 fontSize = 12.sp
             )

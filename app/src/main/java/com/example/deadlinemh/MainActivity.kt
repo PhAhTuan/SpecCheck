@@ -216,6 +216,9 @@ fun MainScreen() {
                         HomeSRFavorite(navController = navController)
                     }
                 }
+                composable("ditoiyeuthich"){
+                    HomeSRFavorite(navController = navController)
+                }
             }
         }
     }
