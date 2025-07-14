@@ -185,10 +185,3 @@ fun FavoriteProductCard(
         }
     }
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ShowFavorite(){
-    val navController = rememberNavController()
-    HomeSRFavorite(navController)
-}

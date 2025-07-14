@@ -1,4 +1,3 @@
-
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -254,26 +253,15 @@ fun LaptopDetailCard(product: Product, navController: NavController) {
     }
 }
 
-    @Composable
-    fun InfoTag(label: String, value: String) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
-                .padding(4.dp)
-        ) {
-            Text(text = label, fontSize = 12.sp, color = Color.DarkGray)
-            Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        }
-    }
-
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewLaptopDetailCard() {
-    val navController = rememberNavController()
-    HomeScreenApp2(navController, productId = 1)
+fun InfoTag(label: String, value: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
+            .padding(4.dp)
+    ) {
+        Text(text = label, fontSize = 12.sp, color = Color.DarkGray)
+        Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+    }
 }
-
-
-
-

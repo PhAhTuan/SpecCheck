@@ -2,6 +2,7 @@ package com.example.deadlinemh
 
 import HomeScreenApp2
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -127,7 +128,8 @@ fun MainScreen() {
                 composable("menucon") {
                     testMenu(navController, onClose = { navController.popBackStack() })
                 }
-                composable("chitietsanpham/{productId}") { backStackEntry ->
+                composable(route = "detail/{productId}",
+                    arguments = listOf(navArgument("productId") { type = NavType.IntType })) { backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
                     val product = allFakeProducts.find { it.id == productId }
                     if (product != null) {
@@ -180,6 +182,7 @@ fun MainScreen() {
                         navController = navController,
                         isDarkMode = isDarkMode,
                         onDarkModeToggle = { newValue ->
+                            Log.d("AccountScreen", "onDarkModeToggle called with newValue: $newValue, type: ${newValue.javaClass}")
                             isDarkMode.value = newValue
                             if (auth.currentUser != null) {
                                 db.collection("users").document(auth.currentUser!!.uid)
@@ -203,6 +206,9 @@ fun MainScreen() {
                     } else {
                         HomeSRFavorite(navController = navController)
                     }
+                }
+                composable("yeuthich"){
+                    HomeSRFavorite(navController)
                 }
             }
         }

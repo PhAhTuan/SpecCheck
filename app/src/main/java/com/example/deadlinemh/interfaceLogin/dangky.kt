@@ -160,8 +160,8 @@ fun NutAnn(email: String, password: String, agpassword: String, navController: N
                             Toast.makeText(context, "Lỗi: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
-                  },
+            }
+        },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4093AA)),
         modifier = Modifier
             .fillMaxWidth()

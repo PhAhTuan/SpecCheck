@@ -66,38 +66,38 @@ fun HomeScreenApp1(navController: NavController, leftProductId: Int? = null) {
                 item { AnhBanner() }
                 items(getFakeProductGroups(navController)) { group ->
                     ProductGroupSection(group, navController, leftProductId)
-                  }
-                }
-            }
-        Thanhtaskbar(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter), navController) // Căn chỉnh ở dưới cùng
-
-            AnimatedVisibility(
-                visible = showMenu.value,
-                enter = slideInHorizontally(initialOffsetX = { it }),
-                exit = slideOutHorizontally(targetOffsetX = { it })
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                ) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    MenuApp(
-                        onClose = { showMenu.value = false },
-                        navController = navController
-                    )
-                }
-                selectedProduct.value?.let { product ->
-                    Text(
-                        text = "Đã chọn: ${product.name}",
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .background(Color.Yellow)
-                    )
                 }
             }
         }
+        Thanhtaskbar(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter), navController) // Căn chỉnh ở dưới cùng
+
+        AnimatedVisibility(
+            visible = showMenu.value,
+            enter = slideInHorizontally(initialOffsetX = { it }),
+            exit = slideOutHorizontally(targetOffsetX = { it })
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                MenuApp(
+                    onClose = { showMenu.value = false },
+                    navController = navController
+                )
+            }
+            selectedProduct.value?.let { product ->
+                Text(
+                    text = "Đã chọn: ${product.name}",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(Color.Yellow)
+                )
+            }
+        }
     }
+}
 @Composable
 fun Phantrencung(onMenuClick: () -> Unit){
     var timkiem = remember { mutableStateOf("") }
@@ -131,7 +131,7 @@ fun Phantrencung(onMenuClick: () -> Unit){
                     .height(52.dp)
                     .fillMaxWidth(0.8f)
 
-                )
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 Icons.Default.Menu,
@@ -351,7 +351,7 @@ fun getFakeProductGroups(navController: NavController): List<ProductGroup> {
                             "Sạc: 65W USB-C")
             )
         ),
-                ProductGroup(
+        ProductGroup(
             title = "Dell",
             products = listOf(
                 Product(id=7,R.drawable.dell_inspiron_15_3520_, "Dell Inspiron 15 3530", "i5-1335U 8GB RAM 512GB SSD", "17,990,000đ", "15,490,000đ", cpu = "R7-8745H", ram = "16GB", ssd = "512GB", vga = "RTX 4050",
@@ -417,10 +417,10 @@ fun getFakeProductGroups(navController: NavController): List<ProductGroup> {
 fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
     Row(
         modifier = modifier
-        .fillMaxWidth()
-        .height(56.dp)
+            .fillMaxWidth()
+            .height(56.dp)
             .clip(RoundedCornerShape(16.dp))
-        .background(Color(0xFFE0E0E0)),
+            .background(Color(0xFFE0E0E0)),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -455,8 +455,6 @@ fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
                 fontSize = 12.sp
             )
         }
-
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clickable { navController.navigate("account") },) {
@@ -476,24 +474,3 @@ fun Thanhtaskbar(modifier: Modifier = Modifier, navController: NavController){
         }
     }
 }
-
-
-
-
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun DefaultPreviewApp(){
-    val navController = rememberNavController()
-    HomeScreenApp1(navController)
-}
-
-
-
-
-
-
-
-
-
-

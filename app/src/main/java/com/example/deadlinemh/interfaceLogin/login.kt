@@ -99,7 +99,7 @@ fun DnDky(onClick: () -> Unit){
         fontSize = 20.sp,
         color = Color.Gray,
         modifier = Modifier
-        .padding(start = 30.dp, end = 30.dp))
+            .padding(start = 30.dp, end = 30.dp))
     Text(text = "Đăng ký",
         fontSize = 16.sp,
         modifier = Modifier.clickable { onClick() }
@@ -200,10 +200,10 @@ fun NutAn(taikhoan: String, password: String, navController: NavController){
                     return@Button
                 }
                 if(taikhoan.contains("@gmail.com")) {
-                   if(taikhoan.isEmpty()){
-                       Toast.makeText(context,"Vui lòng nhập Email/SĐT", Toast.LENGTH_SHORT).show()
-                       return@Button
-                }
+                    if(taikhoan.isEmpty()){
+                        Toast.makeText(context,"Vui lòng nhập Email/SĐT", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     auth.signInWithEmailAndPassword(taikhoan.trim(), password.trim())
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -229,8 +229,8 @@ fun NutAn(taikhoan: String, password: String, navController: NavController){
                                 Toast.makeText(context, "OTP không chính xác", Toast.LENGTH_SHORT).show()
                             }
                         }
-                    }
-                },
+                }
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4093AA)),
             modifier = Modifier
                 .fillMaxWidth()

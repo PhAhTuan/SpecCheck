@@ -150,8 +150,10 @@ fun AccountScreen(
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate("yeuthich") }
-                        .padding(16.dp)
+                        .clickable {
+                            Log.d("Navigation", "Navigating to yeuthich, routes: ${navController.graph}")
+                            navController.navigate("yeuthich") }
+                        .padding(16.dp),
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
 
